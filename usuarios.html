@@ -452,73 +452,64 @@
     <script src="js/demo/datatables-demo.js"></script>
 
     <script>
-    async function cargarUsuarios() {
+    function generarFilaData(usuario) {
+        const foto = usuario.fotoPerfilUrl
+            ? `<img src="${usuario.fotoPerfilUrl}" class="img-thumbnail" width="50" height="50">`
+            : `<!-- Sin foto -->`;
 
+        return [
+            foto,
+            usuario.nombre || "-",
+            usuario.email || "-",
+            usuario.rol || "-",
+            usuario.verificado ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-secondary">No</span>',
+            usuario.conectado ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-secondary">No</span>',
+            usuario.fechaRegistro || "-",
+            `<button class="btn btn-sm btn-warning">Editar</button>
+             <button class="btn btn-sm btn-danger">Eliminar</button>`
+        ];
+    }
+
+    async function cargarUsuarios(dataTable) {
         console.log("⚙️ Ejecutando cargarUsuarios()");
-
-        window.addEventListener("DOMContentLoaded", () => {
-            console.log("📦 DOM cargado");
-            cargarUsuarios();
-        });
-
 
         try {
             console.log("📡 Llamando API usuarios...");
             const res = await fetch("https://backend-mapgenda.onrender.com/usuarios");
+
             if (!res.ok) throw new Error("Fallo al obtener usuarios");
-
             const usuarios = await res.json();
+
             console.log("✅ Respuesta:", usuarios);
-            const tbody = document.querySelector("#dataTable tbody");
-            tbody.innerHTML = "";
 
-            if (usuarios.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No hay usuarios disponibles.</td></tr>`;
-            } else {
-                usuarios.forEach(usuario => {
-                    tbody.innerHTML += generarFilaUsuario(usuario);
-                });
+            dataTable.clear();
+
+            if (!usuarios.length) {
+                dataTable.row.add([
+                    '-', '-', '-', '-', '-', '-', '-', 
+                    '<span class="text-muted">Sin datos</span>'
+                ]).draw();
+                return;
             }
 
-            // Inicializar DataTable después de llenar
-            if ($.fn.DataTable.isDataTable('#dataTable')) {
-                $('#dataTable').DataTable().destroy();
-            }
-            $('#dataTable').DataTable();
+            usuarios.forEach(usuario => {
+                dataTable.row.add(generarFilaData(usuario));
+            });
+
+            dataTable.draw();
 
         } catch (err) {
-            console.error("Error cargando usuarios:", err);
-            const tbody = document.querySelector("#dataTable tbody");
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error al cargar usuarios.</td></tr>`;
+            console.error("❌ Error cargando usuarios:", err);
+            alert("Error al cargar usuarios.");
         }
     }
 
-    function generarFilaUsuario(usuario) {
-        return `
-        <tr>
-            <td>
-                ${usuario.fotoPerfilUrl 
-                    ? `<img src="${usuario.fotoPerfilUrl}" class="img-thumbnail" width="50" height="50">`
-                    : `<!-- Sin foto -->`}
-            </td>
-            <td>${usuario.nombre || "-"}</td>
-            <td>${usuario.email || "-"}</td>
-            <td>${usuario.rol || "-"}</td>
-            <td><span class="badge badge-${usuario.verificado ? 'success' : 'secondary'}">${usuario.verificado ? 'Sí' : 'No'}</span></td>
-            <td><span class="badge badge-${usuario.conectado ? 'success' : 'secondary'}">${usuario.conectado ? 'Sí' : 'No'}</span></td>
-            <td>${usuario.fechaRegistro || '-'}</td>
-            <td>
-                <button class="btn btn-sm btn-warning">Editar</button>
-                <button class="btn btn-sm btn-danger">Eliminar</button>
-            </td>
-        </tr>`;
-    }
-
-    // Ejecutar al cargar
-    window.addEventListener("DOMContentLoaded", cargarUsuarios);
-
-
+    $(document).ready(function () {
+        const dataTable = $('#dataTable').DataTable(); // inicializa una vez
+        cargarUsuarios(dataTable); // carga los datos en tabla
+    });
 </script>
+
 
 
 </body>
