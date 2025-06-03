@@ -470,7 +470,11 @@
             }
 
             // Inicializar DataTable después de llenar
+            if ($.fn.DataTable.isDataTable('#dataTable')) {
+                $('#dataTable').DataTable().destroy();
+            }
             $('#dataTable').DataTable();
+
         } catch (err) {
             console.error("Error cargando usuarios:", err);
             const tbody = document.querySelector("#dataTable tbody");
