@@ -463,10 +463,12 @@
 
 
         try {
+            console.log("📡 Llamando API usuarios...");
             const res = await fetch("https://backend-mapgenda.onrender.com/usuarios");
             if (!res.ok) throw new Error("Fallo al obtener usuarios");
 
             const usuarios = await res.json();
+            console.log("✅ Respuesta:", usuarios);
             const tbody = document.querySelector("#dataTable tbody");
             tbody.innerHTML = "";
 
