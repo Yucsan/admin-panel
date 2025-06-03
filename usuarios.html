@@ -453,6 +453,15 @@
 
     <script>
     async function cargarUsuarios() {
+
+        console.log("⚙️ Ejecutando cargarUsuarios()");
+
+        window.addEventListener("DOMContentLoaded", () => {
+            console.log("📦 DOM cargado");
+            cargarUsuarios();
+        });
+
+
         try {
             const res = await fetch("https://backend-mapgenda.onrender.com/usuarios");
             if (!res.ok) throw new Error("Fallo al obtener usuarios");
@@ -505,6 +514,8 @@
 
     // Ejecutar al cargar
     window.addEventListener("DOMContentLoaded", cargarUsuarios);
+
+
 </script>
 
 
