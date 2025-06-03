@@ -305,21 +305,19 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                
+
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Usuarios</h1>
-                
-                
-                <!-- PINTANDO -->
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                
-                
-                
-                </div>
-                <!-- End of Main Content -->
-                
-                <!-- Footer -->
-                <footer class="sticky-footer bg-white">
+
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+
+
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2020</span>
@@ -360,30 +358,82 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery (primero SIEMPRE) -->
-<script src="vendor/jquery/jquery.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-<!-- Bootstrap + jQuery plugins -->
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
 
-<!-- DataTables (después de jQuery) -->
-<script src="vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
+
+    <script>
+    function generarFilaData(usuario) {
+        const foto = usuario.fotoPerfilUrl
+            ? `<img src="${usuario.fotoPerfilUrl}" class="img-thumbnail" width="50" height="50">`
+            : `<!-- Sin foto -->`;
+
+        return [
+            foto,
+            usuario.nombre || "-",
+            usuario.email || "-",
+            usuario.rol || "-",
+            usuario.verificado ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-secondary">No</span>',
+            usuario.conectado ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-secondary">No</span>',
+            usuario.fechaRegistro || "-",
+            `<button class="btn btn-sm btn-warning">Editar</button>
+             <button class="btn btn-sm btn-danger">Eliminar</button>`
+        ];
+    }
+
+    async function cargarUsuarios(dataTable) {
+        console.log("⚙️ Ejecutando cargarUsuarios()");
+
+        try {
+            console.log("📡 Llamando API usuarios...");
+            const res = await fetch("https://backend-mapgenda.onrender.com/usuarios");
+
+            if (!res.ok) throw new Error("Fallo al obtener usuarios");
+            const usuarios = await res.json();
+
+            console.log("✅ Respuesta:", usuarios);
+
+            dataTable.clear();
+
+            if (!usuarios.length) {
+                dataTable.row.add([
+                    '-', '-', '-', '-', '-', '-', '-', 
+                    '<span class="text-muted">Sin datos</span>'
+                ]).draw();
+                return;
+            }
+
+            usuarios.forEach(usuario => {
+                dataTable.row.add(generarFilaData(usuario));
+            });
+
+            dataTable.draw();
+
+        } catch (err) {
+            console.error("❌ Error cargando usuarios:", err);
+            alert("Error al cargar usuarios.");
+        }
+    }
+
+    $(document).ready(function () {
+        const dataTable = $('#dataTable').DataTable(); // inicializa una vez
+        cargarUsuarios(dataTable); // carga los datos en tabla
+    });
+</script>
 
 
-<!-- Custom scripts for all pages-->
-<script src="js/sb-admin-2.min.js"></script>
-
-   
-<!-- Page level custom scripts -->
-<script src="js/demo/datatables-demo.js"></script>
-
-<!-- Tu script personalizado -->
-<script src="js/usuarios.js"></script>
-
-    
 
 </body>
 
