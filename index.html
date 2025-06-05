@@ -67,7 +67,7 @@
 
     <!-- Bootstrap core JavaScript-->
     <script>
-        /*
+        
         document.getElementById("loginForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
@@ -103,26 +103,17 @@
             const div = document.getElementById("errorMessage");
             div.textContent = msg;
             div.style.display = "block";
-        }*/
+        }
 
 
-            document.getElementById("loginForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        
-        // Simular login y guardar un token ficticio
-        localStorage.setItem("jwt", "token-dev");
-        
-        // Ir al dashboard sin autenticar realmente
-        window.location.href = "dashboard.html";
-    });
-
-    function showError(msg) {
-        const div = document.getElementById("errorMessage");
-        div.textContent = msg;
-        div.style.display = "block";
-    }
-
-    </script>
-</body>
-
-</html>
+</script>
+    
+    <!-- Primero la configuración -->
+    <script src="js/config.js"></script>
+    <!-- Luego la lógica de login -->
+    <script src="js/login.js"></script>
+    
+    
+    </body>
+    
+    </html>
