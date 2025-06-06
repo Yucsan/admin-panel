@@ -97,6 +97,7 @@ usuarioForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const token = localStorage.getItem("jwt");
+    console.log(token);
     if (!token) {
         alert("Sesión expirada. Inicia sesión de nuevo.");
         window.location.href = "index.html";
