@@ -95,20 +95,33 @@ document.getElementById("loginForm").addEventListener("submit", async function (
             return;
         }
 
-        const data = await res.json();
-        localStorage.setItem("jwt", data.token);
-        window.location.href = "dashboard.html";
+        const text = await res.text();
+
+        try {
+            const data = JSON.parse(text);
+            if (!data.token) {
+                showError("No se recibió token. Verifica el servidor.");
+                return;
+            }
+            localStorage.setItem("jwt", data.token);
+            window.location.href = "dashboard.html";
+        } catch (err) {
+            console.error("❌ Respuesta no es JSON válido:", text);
+            showError("Error inesperado en la respuesta del servidor.");
+        }
+
+
     } catch (err) {
         showError("Error al conectar con el servidor.");
         console.error(err);
     }
 });
 
-function showError(msg) {
-    const div = document.getElementById("errorMessage");
-    div.textContent = msg;
-    div.style.display = "block";
-}
+    function showError(msg) {
+        const div = document.getElementById("errorMessage");
+        div.textContent = msg;
+        div.style.display = "block";
+    }
 
 
 
