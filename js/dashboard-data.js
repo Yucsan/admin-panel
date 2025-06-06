@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const baseURL = "http://localhost:8080/aventura"; // ajusta si tu backend está en otro dominio
+  
 
     const token = localStorage.getItem("jwt");
     if (!token) {
