@@ -12,7 +12,8 @@ function generarFilaData(usuario) {
         usuario.conectado ? '<span class="badge badge-success">Sí</span>' : '<span class="badge badge-secondary">No</span>',
         usuario.fechaRegistro || "-",
         `<button class="btn btn-sm btn-warning btn-editar" data-id="${usuario.id}">Editar</button>
-             <button class="btn btn-sm btn-danger">Eliminar</button>`
+        <button class="btn btn-sm btn-danger btn-eliminar-total" data-id="${usuario.id}">Eliminar</button>`
+
     ];
 }
 
@@ -213,6 +214,34 @@ $(document).on("click", ".btn-eliminar", async function () {
         alert("No se pudo eliminar el usuario.");
     }
 });
+
+$(document).on("click", ".btn-eliminar-total", async function () {
+    const id = $(this).data("id");
+    const token = localStorage.getItem("jwt");
+
+    const confirmar = confirm("⚠️ Esta acción eliminará al usuario y *toda* su información relacionada (rutas, lugares, ubicaciones). ¿Deseas continuar?");
+    if (!confirmar) return;
+
+    try {
+        const res = await fetch(`${baseURL}/usuarios/${id}/eliminar-con-datos`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) throw new Error("No se pudo eliminar el usuario");
+
+        const tabla = $('#dataTable').DataTable();
+        await cargarUsuarios(tabla);
+
+        alert("✅ Usuario y sus datos eliminados correctamente.");
+    } catch (err) {
+        console.error("❌ Error al eliminar completamente:", err);
+        alert("Error al eliminar al usuario y sus datos. Verifica la consola.");
+    }
+});
+
 
 
 
